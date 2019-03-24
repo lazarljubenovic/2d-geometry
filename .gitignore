@@ -1,4 +1,4 @@
-node_modules/
-.rpt2_cache/
-demo/
-dst/
+/node_modules/
+/.rpt2_cache/
+/demo/
+/dst/
