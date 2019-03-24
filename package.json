@@ -1,9 +1,9 @@
 {
-  "name": "2d-geometry",
+  "name": "planimetry",
   "version": "0.0.1",
   "description": "Easily draw interactive diagrams for web.",
   "main": "index.js",
-  "repository": "https://githu.com/lazarljubenovic/2d-geometry",
+  "repository": "https://githu.com/lazarljubenovic/planimetry",
   "author": "lazarljubenovic <lazar.ljubenovic.1995@gmail.com>",
   "license": "MIT",
   "private": false,

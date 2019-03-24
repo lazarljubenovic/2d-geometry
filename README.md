@@ -1,9 +1,9 @@
-#  2d-geometry
+# planimetry
 
 ## Installation
 
 ```bash
-$ yarn add 2d-geometry
+$ yarn add planimetry
 ```
 
 ## Usage

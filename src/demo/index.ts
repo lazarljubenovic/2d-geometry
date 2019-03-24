@@ -1,6 +1,6 @@
 import { Scene, Point, Area, Segment } from '../renderer'
 import * as Colors from '../colors'
-import { pairwiseCircular } from '../utils';
+import { pairwiseCircular } from '../utils'
 
 const canvas = document.createElement('canvas')
 document.body.append(canvas)
