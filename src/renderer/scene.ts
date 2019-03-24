@@ -37,7 +37,10 @@ export default class Scene {
 
   // Objects in the scene, looped for rendering.
   protected objects: Object[] = []
-  protected get points(): Point[] { return this.objects.filter(utils.instanceOf(Point)) }
+
+  protected get points (): Point[] {
+    return this.objects.filter(utils.instanceOf(Point))
+  }
 
   // State of the scene.
   protected selectedPoint: Point | null = null
@@ -52,33 +55,38 @@ export default class Scene {
   // Array of functions that get called when events happen
   protected onUpdateFns: Array<() => void> = []
 
-  public constructor(protected ctx: CanvasRenderingContext2D) {
+  public constructor (protected ctx: CanvasRenderingContext2D) {
     this.addEventListeners()
   }
 
-  public setSize(width: number, height: number): this {
+  public setSize (width: number, height: number): this {
     this.ctx.canvas.width = width
     this.ctx.canvas.height = height
     return this
   }
 
-  public getWidth(): number { return this.ctx.canvas.width }
-  public getHeight(): number { return this.ctx.canvas.height }
+  public getWidth (): number {
+    return this.ctx.canvas.width
+  }
 
-  public clear() {
+  public getHeight (): number {
+    return this.ctx.canvas.height
+  }
+
+  public clear () {
     const w = this.getWidth()
     const h = this.getHeight()
     const ctx = this.ctx
     ctx.clearRect(0, 0, w, h)
   }
 
-  public drawGrid() {
+  public drawGrid () {
     this.ctx.save()
     const width = this.getWidth()
     const height = this.getHeight()
     const size = this.gridSize
     this.ctx.strokeStyle = this.gridColor
-  
+
     // Vertical lines
     for (let x = size; x < width; x += size) {
       this.ctx.beginPath()
@@ -86,7 +94,7 @@ export default class Scene {
       this.ctx.lineTo(x + 0.5, height)
       this.ctx.stroke()
     }
-  
+
     // Horizontal lines
     for (let y = size; y < height; y += size) {
       this.ctx.beginPath()
@@ -98,7 +106,7 @@ export default class Scene {
     this.ctx.restore()
   }
 
-  public drawObjects() {
+  public drawObjects () {
     this.objects.forEach(object => {
       if (this.selectedPoint == object) {
         this.ctx.save()
@@ -113,24 +121,24 @@ export default class Scene {
     })
   }
 
-  public drawAll() {
+  public drawAll () {
     if (this.isGridOn) this.drawGrid()
     this.drawObjects()
   }
 
-  public redraw() {
+  public redraw () {
     this.clear()
     this.onUpdateFns.forEach(fn => fn())
     this.drawAll()
   }
 
-  public add(...objects: Object[]): this {
+  public add (...objects: Object[]): this {
     this.pushToObjectsArray(...objects)
     objects.forEach(obj => obj.setScene(this))
     return this
   }
 
-  public onUpdate(fn: () => void): this {
+  public onUpdate (fn: () => void): this {
     this.onUpdateFns.push(fn)
     return this
   }
@@ -138,12 +146,12 @@ export default class Scene {
   /**
    * @internal
    */
-  public pushToObjectsArray(...objects: Object[]): this {
+  public pushToObjectsArray (...objects: Object[]): this {
     this.objects.push(...objects)
     return this
   }
 
-  private moveSelectedPointTo(point: Geo.Point.T) {
+  private moveSelectedPointTo (point: Geo.Point.T) {
     if (this.selectedPoint == null) return
     const result = this.snapToGrid
       ? Geo.Point.snapTo(point, this.gridSize)
@@ -151,7 +159,7 @@ export default class Scene {
     this.selectedPoint.set(result)
   }
 
-  private updateNearestPointBasedOnCursor(cursor: Geo.Point.T) {
+  private updateNearestPointBasedOnCursor (cursor: Geo.Point.T) {
     const nearestPoint = Geo.Point.findClosestPoint(cursor, this.points)
     const result = nearestPoint.distance < 10 ? nearestPoint.point : null
     if (result == null) return this.selectedPoint = null
@@ -181,14 +189,14 @@ export default class Scene {
     this.redraw()
   }
 
-  private addEventListeners() {
+  private addEventListeners () {
     const canvas = this.ctx.canvas
     canvas.addEventListener('mousemove', this.onMouseMove)
     canvas.addEventListener('mousedown', this.onMouseDown)
     document.addEventListener('mouseup', this.onMouseUp)
   }
 
-  private removeEventListeners() {
+  private removeEventListeners () {
     const canvas = this.ctx.canvas
     canvas.removeEventListener('mousemove', this.onMouseMove)
     canvas.removeEventListener('mousedown', this.onMouseDown)
@@ -197,42 +205,42 @@ export default class Scene {
 
   // Tweak various settings
 
-  public gridOn(): this {
+  public gridOn (): this {
     this.isGridOn = true
     return this
   }
 
-  public gridOff(): this {
+  public gridOff (): this {
     this.isGridOn = false
     return this
   }
 
-  public gridToggle(): this {
+  public gridToggle (): this {
     this.isGridOn = !this.isGridOn
     return this
   }
 
-  public setGridSize(size: number): this {
+  public setGridSize (size: number): this {
     this.gridSize = size
     return this
   }
 
-  public setGridColor(color: string): this {
+  public setGridColor (color: string): this {
     this.gridColor = color
     return this
   }
 
-  public snapToGridOn(): this {
+  public snapToGridOn (): this {
     this.snapToGrid = true
     return this
   }
 
-  public snapToGridOff(): this {
+  public snapToGridOff (): this {
     this.snapToGrid = false
     return this
   }
 
-  public snapToGridToggle(): this {
+  public snapToGridToggle (): this {
     this.snapToGrid = !this.snapToGrid
     return this
   }
@@ -247,12 +255,12 @@ export default class Scene {
     isLocked: false,
   }
 
-  public setDefaultPointAttributes(attrbutes: PointAttributes): this {
+  public setDefaultPointAttributes (attrbutes: PointAttributes): this {
     this.defaultPointAttributes = attrbutes
     return this
   }
 
-  public getDefaultPointAttributes(): PointAttributes {
+  public getDefaultPointAttributes (): PointAttributes {
     return { ...this.defaultPointAttributes }
   }
 
@@ -266,12 +274,12 @@ export default class Scene {
     isVisible: true,
   }
 
-  public setDefaultLineAttributes(attributes: LineAttributes): this {
+  public setDefaultLineAttributes (attributes: LineAttributes): this {
     this.defaultLineAttributes = attributes
     return this
   }
 
-  public getDefaultLineAttributes(): LineAttributes {
+  public getDefaultLineAttributes (): LineAttributes {
     return { ...this.defaultLineAttributes }
   }
 
@@ -282,12 +290,12 @@ export default class Scene {
     style: AreaShadeStyle.Solid,
   }
 
-  public setDefaultAreaAttibutes(attributes: AreaAttributes): this {
+  public setDefaultAreaAttibutes (attributes: AreaAttributes): this {
     this.defaultAreaAttributes = attributes
     return this
   }
 
-  public getDefaultAreaAttributes(): AreaAttributes {
+  public getDefaultAreaAttributes (): AreaAttributes {
     return { ...this.defaultAreaAttributes }
   }
 

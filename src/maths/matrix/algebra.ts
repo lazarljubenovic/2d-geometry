@@ -1,7 +1,7 @@
 import { isMatrix } from './checks'
 
 // NOTE: Works only with 2D matrices
-export function getDimensions(matrix: number[][]): number[] {
+export function getDimensions (matrix: number[][]): number[] {
   if (!isMatrix(matrix)) {
     throw `Not a matrix: ${JSON.stringify(matrix)}`
   }
@@ -10,7 +10,7 @@ export function getDimensions(matrix: number[][]): number[] {
   return [numberOfRows, numberOfColumns]
 }
 
-export function mul(a: number[][], b: number[][]): number[][] {
+export function mul (a: number[][], b: number[][]): number[][] {
   let result: number[][] = Array(a.length).fill(null).map(_ => [])
   for (let row = 0; row < a.length; row++) {
     for (let col = 0; col < b[0].length; col++) {
@@ -24,7 +24,7 @@ export function mul(a: number[][], b: number[][]): number[][] {
   return result
 }
 
-export function transpose(matrix: number[][]): number[][] {
+export function transpose (matrix: number[][]): number[][] {
   return matrix[0].map((_, i) => matrix.map(x => x[i]))
 }
 
@@ -38,7 +38,7 @@ export function transpose(matrix: number[][]): number[][] {
  * @param matrix
  * @constructor
  */
-export function homogenousInverse(matrix: number[][]): number[][] {
+export function homogenousInverse (matrix: number[][]): number[][] {
   const [
     [a, c, e],
     [b, d, f],

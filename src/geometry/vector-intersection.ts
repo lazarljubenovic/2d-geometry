@@ -8,7 +8,7 @@ export const enum Result {
   COLLINEAR,
 }
 
-export function test(
+export function test (
   v11: Point.T,
   v12: Point.T,
   v21: Point.T,

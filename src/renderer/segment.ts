@@ -14,17 +14,17 @@ export default class extends Object<LineAttributes> {
     width: undefined,
   }
 
-  constructor(public p1: PointObject, public p2: PointObject) {
+  constructor (public p1: PointObject, public p2: PointObject) {
     super()
   }
 
-  public set(p1: Point.T, p2: Point.T): this {
+  public set (p1: Point.T, p2: Point.T): this {
     this.p1.set(p1)
     this.p2.set(p2)
     return this
   }
 
-  public getAttributes() {
+  public getAttributes () {
     const defaultAttributes = this.getScene().getDefaultLineAttributes()
     return override(defaultAttributes, this.attributes)
   }
@@ -67,17 +67,17 @@ export default class extends Object<LineAttributes> {
     return this
   }
 
-  public setVisible(): this {
+  public setVisible (): this {
     this.attributes.isVisible = true
     return this
   }
 
-  public setInvisible(): this {
+  public setInvisible (): this {
     this.attributes.isVisible = false
     return this
   }
 
-  public toggleVisibility(): this {
+  public toggleVisibility (): this {
     this.attributes.isVisible = !this.attributes.isVisible
     return this
   }

@@ -13,6 +13,6 @@ export function getGeneralFormFromSegment (p1: Point.T, p2: Point.T): T {
   return { a, b, c }
 }
 
-export function equation ({ x, y }: Point.T, { a, b, c }: T ) {
+export function equation ({ x, y }: Point.T, { a, b, c }: T) {
   return a * x + b * y + c
 }

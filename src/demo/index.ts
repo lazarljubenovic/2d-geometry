@@ -1,4 +1,4 @@
-import { Scene, Point, Area, Segment } from '../renderer'
+import { Area, Point, Scene, Segment } from '../renderer'
 import * as Colors from '../colors'
 import * as Geo from '../geometry'
 import { pairwiseCircular } from '../utils'
@@ -29,7 +29,7 @@ const referentPoint = new Point(300, 200)
   .setSize(8)
   .setColor(Colors.Clrs.LIME)
 
-function update() {
+function update () {
   const aabb = Geo.Aabb.compute(points, 5)
   const { top } = Geo.Aabb.getRayEndpoints(referentPoint, aabb)
   const count = getIntersectionCount(referentPoint, top, points)

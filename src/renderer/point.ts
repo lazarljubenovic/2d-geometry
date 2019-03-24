@@ -13,22 +13,22 @@ export default class extends Object<PointAttributes> implements Point.T {
     isLocked: undefined,
   }
 
-  constructor(public x: number, public y: number) {
+  constructor (public x: number, public y: number) {
     super()
   }
 
-  public set(p: Point.T): this {
+  public set (p: Point.T): this {
     this.x = p.x
     this.y = p.y
     return this
   }
 
-  public getAttributes() {
+  public getAttributes () {
     const defaultAttributes = this.getScene().getDefaultPointAttributes()
     return override(defaultAttributes, this.attributes)
   }
 
-  public render(ctx: CanvasRenderingContext2D): this {
+  public render (ctx: CanvasRenderingContext2D): this {
     const attrs = this.getAttributes()
     if (!attrs.isVisible) return this
 
@@ -44,47 +44,47 @@ export default class extends Object<PointAttributes> implements Point.T {
 
   // Setters
 
-  public setColor(color: string): this {
+  public setColor (color: string): this {
     this.attributes.color = color
     return this
   }
 
-  public setSize(size: number): this {
+  public setSize (size: number): this {
     this.attributes.size = size
     return this
   }
 
-  public setLabel(label: string): this {
+  public setLabel (label: string): this {
     this.attributes.label = label
     return this
   }
 
-  public setVisible(): this {
+  public setVisible (): this {
     this.attributes.isVisible = true
     return this
   }
 
-  public setInvisible(): this {
+  public setInvisible (): this {
     this.attributes.isVisible = false
     return this
   }
 
-  public toggleVisibility(): this {
+  public toggleVisibility (): this {
     this.attributes.isVisible = !this.attributes.isVisible
     return this
   }
 
-  public lock(): this {
+  public lock (): this {
     this.attributes.isLocked = true
     return this
   }
 
-  public unlock(): this {
+  public unlock (): this {
     this.attributes.isLocked = false
     return this
   }
 
-  public toggleLock(): this {
+  public toggleLock (): this {
     this.attributes.isLocked = !this.attributes.isLocked
     return this
   }

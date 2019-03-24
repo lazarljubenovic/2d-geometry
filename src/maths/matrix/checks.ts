@@ -10,7 +10,7 @@ import { getDimensions } from './algebra'
  * @param matrix
  * @constructor
  */
-export function isMatrix(matrix: number[][]): boolean {
+export function isMatrix (matrix: number[][]): boolean {
   try {
     const firstRowLength = matrix[0].length
     return matrix.every(row => {
@@ -24,7 +24,7 @@ export function isMatrix(matrix: number[][]): boolean {
   }
 }
 
-export function isSquareMatrix(matrix: number[][]): boolean {
+export function isSquareMatrix (matrix: number[][]): boolean {
   const [n, m] = getDimensions(matrix)
   return n == m
 }

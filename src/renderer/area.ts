@@ -10,11 +10,11 @@ export default class extends Object<AreaAttributes> {
     style: undefined,
   }
 
-  constructor(public points: Point.T[]) {
+  constructor (public points: Point.T[]) {
     super()
   }
 
-  public set(points: Point.T[]): this {
+  public set (points: Point.T[]): this {
     this.points = points
     return this
   }
@@ -24,7 +24,7 @@ export default class extends Object<AreaAttributes> {
     return override(defaultAttributes, this.attributes)
   }
 
-  public render(ctx: CanvasRenderingContext2D): this {
+  public render (ctx: CanvasRenderingContext2D): this {
     const attrs = this.getAttributes()
 
     ctx.save()
@@ -41,12 +41,12 @@ export default class extends Object<AreaAttributes> {
     return this
   }
 
-  public setColor(color: string): this {
+  public setColor (color: string): this {
     this.attributes.color = color
     return this
   }
 
-  public setStyle(style: AreaShadeStyle): this {
+  public setStyle (style: AreaShadeStyle): this {
     this.attributes.style = style
     return this
   }
