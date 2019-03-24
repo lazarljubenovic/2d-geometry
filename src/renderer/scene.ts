@@ -43,14 +43,21 @@ export default class Scene {
   }
 
   // State of the scene.
-  protected selectedPoint: Point | null = null
-  protected isMouseDown: boolean = false
+  protected _selectedPoint: Point | null = null
+  protected _isMouseDown: boolean = false
 
   // Various settings around
-  protected isGridOn: boolean = true
-  protected gridSize: number = 20
-  protected gridColor: string = 'rgba(0, 116, 217, .2)'
-  protected snapToGrid: boolean = true
+  protected _isGridOn: boolean = true
+  protected _gridSize: number = 20
+  protected _gridColor: string = 'rgba(0, 116, 217, .2)'
+  protected _snapToGrid: boolean = true
+  protected _renderOffset: number = 0
+
+  public get isGridOn (): boolean { return this._isGridOn }
+  public get gridSize (): number { return this._gridSize }
+  public get gridColor (): string { return this._gridColor }
+  public get snapToGrid (): boolean { return this._snapToGrid }
+  public get renderOffset (): number { return this._renderOffset }
 
   // Array of functions that get called when events happen
   protected onUpdateFns: Array<() => void> = []
@@ -86,20 +93,21 @@ export default class Scene {
     const height = this.getHeight()
     const size = this.gridSize
     this.ctx.strokeStyle = this.gridColor
+    const offset = this.renderOffset
 
     // Vertical lines
     for (let x = size; x < width; x += size) {
       this.ctx.beginPath()
-      this.ctx.moveTo(x + 0.5, 0)
-      this.ctx.lineTo(x + 0.5, height)
+      this.ctx.moveTo(x + offset, 0)
+      this.ctx.lineTo(x + offset, height)
       this.ctx.stroke()
     }
 
     // Horizontal lines
     for (let y = size; y < height; y += size) {
       this.ctx.beginPath()
-      this.ctx.moveTo(0, y + 0.5)
-      this.ctx.lineTo(width, y + 0.5)
+      this.ctx.moveTo(0, y + offset)
+      this.ctx.lineTo(width, y + offset)
       this.ctx.stroke()
     }
 
@@ -107,13 +115,14 @@ export default class Scene {
   }
 
   public drawObjects () {
+    const offset = this.renderOffset
     this.objects.forEach(object => {
-      if (this.selectedPoint == object) {
+      if (this._selectedPoint == object) {
         this.ctx.save()
-        const { x, y } = this.selectedPoint
+        const { x, y } = this._selectedPoint
         this.ctx.beginPath()
         this.ctx.fillStyle = Colors.Clrs.BLUE + 'AA'
-        this.ctx.arc(x + 0.5, y + 0.5, 10, 0, 2 * Math.PI, false)
+        this.ctx.arc(x + offset, y + offset, 10, 0, 2 * Math.PI, false)
         this.ctx.fill()
         this.ctx.restore()
       }
@@ -122,7 +131,7 @@ export default class Scene {
   }
 
   public drawAll () {
-    if (this.isGridOn) this.drawGrid()
+    if (this._isGridOn) this.drawGrid()
     this.drawObjects()
   }
 
@@ -152,25 +161,25 @@ export default class Scene {
   }
 
   private moveSelectedPointTo (point: Geo.Point.T) {
-    if (this.selectedPoint == null) return
-    const result = this.snapToGrid
-      ? Geo.Point.snapTo(point, this.gridSize)
+    if (this._selectedPoint == null) return
+    const result = this._snapToGrid
+      ? Geo.Point.snapTo(point, this._gridSize)
       : point
-    this.selectedPoint.set(result)
+    this._selectedPoint.set(result)
   }
 
   private updateNearestPointBasedOnCursor (cursor: Geo.Point.T) {
     const nearestPoint = Geo.Point.findClosestPoint(cursor, this.points)
     const result = nearestPoint.distance < 10 ? nearestPoint.point : null
-    if (result == null) return this.selectedPoint = null
+    if (result == null) return this._selectedPoint = null
     const { isLocked } = result.getAttributes()
-    if (isLocked) return this.selectedPoint = null
-    this.selectedPoint = result
+    if (isLocked) return this._selectedPoint = null
+    this._selectedPoint = result
   }
 
   private onMouseMove = (event: MouseEvent) => {
     const cursor = { x: event.offsetX, y: event.offsetY }
-    if (this.isMouseDown) {
+    if (this._isMouseDown) {
       this.moveSelectedPointTo(cursor)
     } else {
       this.updateNearestPointBasedOnCursor(cursor)
@@ -179,12 +188,12 @@ export default class Scene {
   }
 
   private onMouseDown = (event: MouseEvent) => {
-    this.isMouseDown = true
+    this._isMouseDown = true
     document.body.style.cursor = 'none'
   }
 
   private onMouseUp = (event: MouseEvent) => {
-    this.isMouseDown = false
+    this._isMouseDown = false
     document.body.style.cursor = 'default'
     this.redraw()
   }
@@ -206,42 +215,57 @@ export default class Scene {
   // Tweak various settings
 
   public gridOn (): this {
-    this.isGridOn = true
+    this._isGridOn = true
     return this
   }
 
   public gridOff (): this {
-    this.isGridOn = false
+    this._isGridOn = false
     return this
   }
 
   public gridToggle (): this {
-    this.isGridOn = !this.isGridOn
+    this._isGridOn = !this._isGridOn
     return this
   }
 
   public setGridSize (size: number): this {
-    this.gridSize = size
+    this._gridSize = size
     return this
   }
 
   public setGridColor (color: string): this {
-    this.gridColor = color
+    this._gridColor = color
     return this
   }
 
   public snapToGridOn (): this {
-    this.snapToGrid = true
+    this._snapToGrid = true
     return this
   }
 
   public snapToGridOff (): this {
-    this.snapToGrid = false
+    this._snapToGrid = false
     return this
   }
 
   public snapToGridToggle (): this {
-    this.snapToGrid = !this.snapToGrid
+    this._snapToGrid = !this._snapToGrid
+    return this
+  }
+
+  public pointFiveHackOn (): this {
+    this._renderOffset = 0.5
+    return this
+  }
+
+  public pointFiveHackOff (): this {
+    this._renderOffset = 0
+    return this
+  }
+
+  public pointFiveHackToggle (): this {
+    this._renderOffset = this._renderOffset == 0 ? 0.5 : 0
     return this
   }
 

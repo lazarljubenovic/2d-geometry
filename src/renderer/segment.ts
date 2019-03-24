@@ -33,12 +33,14 @@ export default class extends Object<LineAttributes> {
     const attrs = this.getAttributes()
     if (!attrs.isVisible) return this
 
+    const offset = this.getScene().renderOffset
+
     ctx.save()
     ctx.strokeStyle = attrs.color
     ctx.lineWidth = attrs.width
     ctx.beginPath()
-    ctx.moveTo(this.p1.x + 0.5, this.p1.y + 0.5)
-    ctx.lineTo(this.p2.x + 0.5, this.p2.y + 0.5)
+    ctx.moveTo(this.p1.x + offset, this.p1.y + offset)
+    ctx.lineTo(this.p2.x + offset, this.p2.y + offset)
     ctx.stroke()
     ctx.restore()
 

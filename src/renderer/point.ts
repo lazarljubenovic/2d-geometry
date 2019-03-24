@@ -32,10 +32,11 @@ export default class extends Object<PointAttributes> implements Point.T {
     const attrs = this.getAttributes()
     if (!attrs.isVisible) return this
 
+    const offset = this.getScene().renderOffset
     ctx.save()
     ctx.fillStyle = attrs.color
     ctx.beginPath()
-    ctx.arc(this.x + 0.5, this.y + 0.5, attrs.size, 0, 2 * Math.PI)
+    ctx.arc(this.x + offset, this.y + offset, attrs.size, 0, 2 * Math.PI)
     ctx.fill()
     ctx.restore()
 
