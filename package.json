@@ -2,7 +2,8 @@
   "name": "planimetry",
   "version": "0.0.2",
   "description": "Easily draw interactive diagrams for web.",
-  "main": "index.js",
+  "main": "./dst/index.js",
+  "types": "./dst/index.d.ts",
   "repository": "https://github.com/lazarljubenovic/planimetry",
   "author": "lazarljubenovic <lazar.ljubenovic.1995@gmail.com>",
   "license": "MIT",
@@ -21,9 +22,13 @@
     "mocha": "^6.0.2",
     "rollup": "^1.7.2",
     "rollup-plugin-copy": "^0.2.3",
+    "rollup-plugin-node-resolve": "^4.0.1",
     "rollup-plugin-typescript2": "^0.20.1",
     "servor": "^2.0.3",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.4000"
+  },
+  "dependencies": {
+    "fpop": "0.1.0"
   }
 }

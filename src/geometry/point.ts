@@ -5,6 +5,10 @@ export interface T {
   y: number
 }
 
+export function New(x: number, y: number): T {
+  return { x, y }
+}
+
 export function add(...points: T[]): T {
   let x: number = 0
   let y: number = 0

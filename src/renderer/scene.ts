@@ -50,7 +50,7 @@ export default class Scene {
   protected snapToGrid: boolean = true
 
   // Array of functions that get called when events happen
-  protected onUpdate: Array<() => void> = []
+  protected onUpdateFns: Array<() => void> = []
 
   public constructor(protected ctx: CanvasRenderingContext2D) {
     this.addEventListeners()
@@ -120,13 +120,18 @@ export default class Scene {
 
   public redraw() {
     this.clear()
-    this.onUpdate.forEach(fn => fn())
+    this.onUpdateFns.forEach(fn => fn())
     this.drawAll()
   }
 
   public add(...objects: Object[]): this {
     this.pushToObjectsArray(...objects)
     objects.forEach(obj => obj.setScene(this))
+    return this
+  }
+
+  public onUpdate(fn: () => void): this {
+    this.onUpdateFns.push(fn)
     return this
   }
 

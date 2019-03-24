@@ -148,6 +148,11 @@ buffer-from@^1.0.0:
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.1.tgz#32713bc028f75c02fdb710d7c7bcec1f2c6070ef"
   integrity sha512-MQcXEUbCKtEo7bhqEs6560Hyd4XaovZlO/k9V3hjVUF/zwW7KBVdSK4gIt/bzwS9MbR5qob+F5jusZsb0YQK2A==
 
+builtin-modules@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/builtin-modules/-/builtin-modules-3.0.0.tgz#1e587d44b006620d90286cc7a9238bbc6129cab1"
+  integrity sha512-hMIeU4K2ilbXV6Uv93ZZ0Avg/M91RaKXucQ+4me2Do1txxBDyDZWCBa5bJSLqoNTRpXTLwEzIk1KmloenDDjhg==
+
 cache-base@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/cache-base/-/cache-base-1.0.1.tgz#0a7f46416831c8b662ee36fe4e7c59d76f666ab2"
@@ -483,6 +488,11 @@ for-in@^1.0.2:
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
   integrity sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=
 
+fpop@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/fpop/-/fpop-0.1.0.tgz#baadbd533235f8b7e1491cb7dd1c48d6725051b2"
+  integrity sha512-uBxn2mBxN3TTB3Df7wlWATEEz4i5LEU88pnWclOrA6yUVFxQ8BXKw6G8b59FZRFF2sRoweNcoJGGnP0IKzUrCw==
+
 fragment-cache@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/fragment-cache/-/fragment-cache-0.2.1.tgz#4290fad27f13e89be7f33799c6bc5a0abfff0d19"
@@ -766,6 +776,11 @@ is-glob@^3.1.0:
   integrity sha1-e6WuJCF4BKxwcHuWkiVnSGzD6Eo=
   dependencies:
     is-extglob "^2.1.0"
+
+is-module@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-module/-/is-module-1.0.0.tgz#3258fb69f78c14d5b815d664336b4cffb6441591"
+  integrity sha1-Mlj7afeMFNW4FdZkM2tM/7ZEFZE=
 
 is-number@^3.0.0:
   version "3.0.0"
@@ -1249,7 +1264,7 @@ resolve-url@^0.2.1:
   resolved "https://registry.yarnpkg.com/resolve-url/-/resolve-url-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
   integrity sha1-LGN/53yJOv0qZj/iGqkIAGjiBSo=
 
-resolve@1.10.0:
+resolve@1.10.0, resolve@^1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.10.0.tgz#3bdaaeaf45cc07f375656dfd2e54ed0810b101ba"
   integrity sha512-3sUr9aq5OfSg2S9pNtPA9hL1FVEAjvfOC4leW0SNf/mpnaakz2a9femSd6LqAww2RaFctwyf1lCqnTHuF1rxDg==
@@ -1268,6 +1283,15 @@ rollup-plugin-copy@^0.2.3:
   dependencies:
     colors "^1.1.2"
     fs-extra "^3.0.0"
+
+rollup-plugin-node-resolve@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-node-resolve/-/rollup-plugin-node-resolve-4.0.1.tgz#f95765d174e5daeef9ea6268566141f53aa9d422"
+  integrity sha512-fSS7YDuCe0gYqKsr5OvxMloeZYUSgN43Ypi1WeRZzQcWtHgFayV5tUSPYpxuaioIIWaBXl6NrVk0T2/sKwueLg==
+  dependencies:
+    builtin-modules "^3.0.0"
+    is-module "^1.0.0"
+    resolve "^1.10.0"
 
 rollup-plugin-typescript2@^0.20.1:
   version "0.20.1"
