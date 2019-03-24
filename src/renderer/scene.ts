@@ -113,7 +113,7 @@ export default class Scene {
         const { x, y } = this.selectedPoint
         this.ctx.beginPath()
         this.ctx.fillStyle = Colors.Clrs.BLUE + 'AA'
-        this.ctx.arc(x, y, 10, 0, 2 * Math.PI, false)
+        this.ctx.arc(x + 0.5, y + 0.5, 10, 0, 2 * Math.PI, false)
         this.ctx.fill()
         this.ctx.restore()
       }
