@@ -9,6 +9,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
+    "prepublish": "build",
     "build": "rollup -c",
     "watch": "rollup -cw",
     "demo:build": "rollup -c rollup.demo.config.js",
