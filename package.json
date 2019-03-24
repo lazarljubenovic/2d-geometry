@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "Easily draw interactive diagrams for web.",
   "main": "index.js",
-  "repository": "https://githu.com/lazarljubenovic/planimetry",
+  "repository": "https://github.com/lazarljubenovic/planimetry",
   "author": "lazarljubenovic <lazar.ljubenovic.1995@gmail.com>",
   "license": "MIT",
   "private": false,
