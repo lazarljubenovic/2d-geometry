@@ -26,15 +26,15 @@ export default class extends Object<AreaAttributes> {
 
   public render(ctx: CanvasRenderingContext2D): this {
     const attrs = this.getAttributes()
-    
+
     ctx.save()
     ctx.fillStyle = attrs.color
     const [first, ...rest] = this.points
-    ctx.moveTo(first.x, first.y)
+    ctx.moveTo(first.x + 0.5, first.y + 0.5)
     for (const point of rest) {
-      ctx.lineTo(point.x, point.y)
+      ctx.lineTo(point.x + 0.5, point.y + 0.5)
     }
-    ctx.lineTo(first.x, first.y)
+    ctx.lineTo(first.x + 0.5, first.y + 0.5)
     ctx.fill()
     ctx.restore()
 

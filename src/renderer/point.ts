@@ -35,7 +35,7 @@ export default class extends Object<PointAttributes> implements Point.T {
     ctx.save()
     ctx.fillStyle = attrs.color
     ctx.beginPath()
-    ctx.arc(this.x, this.y, attrs.size, 0, 2 * Math.PI)
+    ctx.arc(this.x + 0.5, this.y + 0.5, attrs.size, 0, 2 * Math.PI)
     ctx.fill()
     ctx.restore()
 

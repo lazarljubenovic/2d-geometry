@@ -37,8 +37,8 @@ export default class extends Object<LineAttributes> {
     ctx.strokeStyle = attrs.color
     ctx.lineWidth = attrs.width
     ctx.beginPath()
-    ctx.moveTo(this.p1.x, this.p1.y)
-    ctx.lineTo(this.p2.x, this.p2.y)
+    ctx.moveTo(this.p1.x + 0.5, this.p1.y + 0.5)
+    ctx.lineTo(this.p2.x + 0.5, this.p2.y + 0.5)
     ctx.stroke()
     ctx.restore()
 
