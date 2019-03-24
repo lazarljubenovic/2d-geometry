@@ -195,6 +195,48 @@ export default class Scene {
     document.removeEventListener('mouseup', this.onMouseUp)
   }
 
+  // Tweak various settings
+
+  public gridOn(): this {
+    this.isGridOn = true
+    return this
+  }
+
+  public gridOff(): this {
+    this.isGridOn = false
+    return this
+  }
+
+  public gridToggle(): this {
+    this.isGridOn = !this.isGridOn
+    return this
+  }
+
+  public setGridSize(size: number): this {
+    this.gridSize = size
+    return this
+  }
+
+  public setGridColor(color: string): this {
+    this.gridColor = color
+    return this
+  }
+
+  public snapToGridOn(): this {
+    this.snapToGrid = true
+    return this
+  }
+
+  public snapToGridOff(): this {
+    this.snapToGrid = false
+    return this
+  }
+
+  public snapToGridToggle(): this {
+    this.snapToGrid = !this.snapToGrid
+    return this
+  }
+
   // Point
 
   private defaultPointAttributes: PointAttributes = {
