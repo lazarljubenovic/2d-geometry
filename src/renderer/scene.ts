@@ -42,6 +42,11 @@ export default class Scene {
     return this.objects.filter(utils.instanceOf(Point))
   }
 
+  // Some objects aren't "physical", so we only compute them
+  // on the fly on each change and let the renderer draw it.
+  // For example, a bounding box of a polygon.
+  protected virtualObjects: Array<() => Object[]> = [() => []]
+
   // State of the scene.
   protected _selectedPoint: Point | null = null
   protected _isMouseDown: boolean = false
@@ -87,7 +92,7 @@ export default class Scene {
     ctx.clearRect(0, 0, w, h)
   }
 
-  public drawGrid () {
+  public drawGrid (): this {
     this.ctx.save()
     const width = this.getWidth()
     const height = this.getHeight()
@@ -112,9 +117,10 @@ export default class Scene {
     }
 
     this.ctx.restore()
+    return this
   }
 
-  public drawObjects () {
+  public drawObjects (): this {
     const offset = this.renderOffset
     this.objects.forEach(object => {
       if (this._selectedPoint == object) {
@@ -128,11 +134,26 @@ export default class Scene {
       }
       object.render(this.ctx)
     })
+    return this
   }
 
-  public drawAll () {
+  public drawVirtualObjects (): this {
+    const offset = this.renderOffset
+    const objectGroups = this.virtualObjects.map(fn => fn())
+    for (const objectGroup of objectGroups) {
+      for (const object of objectGroup) {
+        object.render(this.ctx)
+      }
+    }
+    return this
+  }
+
+  public drawAll (): this {
     if (this._isGridOn) this.drawGrid()
-    this.drawObjects()
+    this
+      .drawObjects()
+      .drawVirtualObjects()
+    return this
   }
 
   public redraw () {
@@ -144,6 +165,11 @@ export default class Scene {
   public add (...objects: Object[]): this {
     this.pushToObjectsArray(...objects)
     objects.forEach(obj => obj.setScene(this))
+    return this
+  }
+
+  public addVirtualObjects (fn: () => Object[]): this {
+    this.virtualObjects.push(fn)
     return this
   }
 
