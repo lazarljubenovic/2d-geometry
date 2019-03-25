@@ -3,8 +3,14 @@ import { Point } from '../geometry'
 import { override } from '../utils'
 import { LineAttributes, LineStyle } from './scene'
 import PointObject from './point'
+import * as its from '@lazarljubenovic/iterators'
 
-export default class extends Object<LineAttributes> {
+export default class Segment extends Object<LineAttributes> {
+
+  public static Polygon (points: Point.T[]): Segment[] {
+    return [...its.pairwiseCircular(points)]
+      .map(([p1, p2]) => new Segment(p1, p2))
+  }
 
   protected attributes: Partial<LineAttributes> = {
     color: undefined,
@@ -14,13 +20,15 @@ export default class extends Object<LineAttributes> {
     width: undefined,
   }
 
-  constructor (public p1: PointObject, public p2: PointObject) {
+  constructor (public p1: Point.T, public p2: Point.T) {
     super()
   }
 
   public set (p1: Point.T, p2: Point.T): this {
-    this.p1.set(p1)
-    this.p2.set(p2)
+    this.p1.x = p1.x
+    this.p1.y = p1.y
+    this.p2.x = p2.x
+    this.p2.y = p2.y
     return this
   }
 

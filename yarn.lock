@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@lazarljubenovic/iterators@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@lazarljubenovic/iterators/-/iterators-0.0.1.tgz#200d331c76afdcfaf87f7c59faad7a75a24b4102"
+  integrity sha512-N4Id3v4UWC89tdv1sS84UWP4Aie7OX53VMRsWLcPWqyBZ3xsVendX4Pu1H+eBuegdqApFv+6+s/kA2UwPWkSkg==
+
 "@types/chai@^4.1.7":
   version "4.1.7"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.1.7.tgz#1b8e33b61a8c09cbe1f85133071baa0dbf9fa71a"

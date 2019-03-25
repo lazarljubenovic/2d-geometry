@@ -30,6 +30,7 @@
     "typescript": "^3.3.4000"
   },
   "dependencies": {
+    "@lazarljubenovic/iterators": "^0.0.1",
     "fpop": "0.1.0"
   }
 }
