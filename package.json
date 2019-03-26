@@ -1,6 +1,6 @@
 {
   "name": "planimetry",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Easily draw interactive diagrams for web.",
   "main": "./dst/index.js",
   "types": "./dst/index.d.ts",
