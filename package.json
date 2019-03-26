@@ -14,7 +14,7 @@
     "watch": "rollup -cw",
     "demo:build": "rollup -c rollup.demo.config.js",
     "demo:watch": "rollup -c rollup.demo.config.js -w",
-    "test": "mocha -r ts-node/register src/**/*.spec.ts"
+    "test": "TS_NODE_PROJECT='tsconfig.test.json' mocha -r ts-node/register src/**/*.spec.ts"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

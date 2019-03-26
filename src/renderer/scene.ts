@@ -142,6 +142,7 @@ export default class Scene {
     const objectGroups = this.virtualObjects.map(fn => fn())
     for (const objectGroup of objectGroups) {
       for (const object of objectGroup) {
+        object.setScene(this)
         object.render(this.ctx)
       }
     }
