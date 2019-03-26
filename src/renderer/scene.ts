@@ -53,12 +53,16 @@ export default class Scene {
 
   // Various settings around
   protected _isGridOn: boolean = true
+  protected _gridOffsetX: number = 0
+  protected _gridOffsetY: number = 0
   protected _gridSize: number = 20
   protected _gridColor: string = 'rgba(0, 116, 217, .2)'
   protected _snapToGrid: boolean = true
   protected _renderOffset: number = 0
 
   public get isGridOn (): boolean { return this._isGridOn }
+  public get gridOffsetX(): number { return this._gridOffsetX }
+  public get gridOffsetY(): number { return this._gridOffsetY }
   public get gridSize (): number { return this._gridSize }
   public get gridColor (): string { return this._gridColor }
   public get snapToGrid (): boolean { return this._snapToGrid }
@@ -101,7 +105,7 @@ export default class Scene {
     const offset = this.renderOffset
 
     // Vertical lines
-    for (let x = size; x < width; x += size) {
+    for (let x = this.gridOffsetX; x <= width; x += size) {
       this.ctx.beginPath()
       this.ctx.moveTo(x + offset, 0)
       this.ctx.lineTo(x + offset, height)
@@ -109,7 +113,7 @@ export default class Scene {
     }
 
     // Horizontal lines
-    for (let y = size; y < height; y += size) {
+    for (let y = this.gridOffsetY; y <= height; y += size) {
       this.ctx.beginPath()
       this.ctx.moveTo(0, y + offset)
       this.ctx.lineTo(width, y + offset)
@@ -253,6 +257,12 @@ export default class Scene {
 
   public gridToggle (): this {
     this._isGridOn = !this._isGridOn
+    return this
+  }
+
+  public setGridOffset (x: number, y: number): this {
+    this._gridOffsetX = x
+    this._gridOffsetY = y
     return this
   }
 
