@@ -49,8 +49,8 @@ function getIntersectionCount (p1: Geo.Point.T, p2: Geo.Point.T, polygon: Geo.Po
   let numberOfIntersections: number = 0
   const polygonSegments = pairwiseCircular(points)
   for (const [poly1, poly2] of polygonSegments) {
-    const intersectionResult = Geo.VectorIntersection.test(p1, p2, poly1, poly2)
-    if (intersectionResult == Geo.VectorIntersection.Result.YES) {
+    const intersectionResult = Geo.VectorIntersection.exists(p1, p2, poly1, poly2)
+    if (intersectionResult == Geo.VectorIntersection.Existence.YES) {
       numberOfIntersections++
     }
   }

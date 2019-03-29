@@ -1,4 +1,5 @@
 import * as utils from '../utils'
+import * as fpop from 'fpop'
 
 export interface T {
   x: number
@@ -7,6 +8,18 @@ export interface T {
 
 export function New (x: number, y: number): T {
   return { x, y }
+}
+
+export function x (t: T): number {
+  return t.x
+}
+
+export function y (t: T): number {
+  return t.y
+}
+
+export function eq (...points: T[]): boolean {
+  return fpop.eq(...points.map(x)) && fpop.eq(...points.map(y))
 }
 
 export function add (...points: T[]): T {
@@ -63,4 +76,28 @@ export function findClosestPoint<U extends T, V extends T> (reference: U, points
     }
   }
   return { index, point: points[index], distance }
+}
+
+export function perpProd (v: T, w: T): number {
+  return v.x * w.y - v.y * w.x
+}
+
+export function perp (u: T): T {
+  const x = -u.y
+  // noinspection JSSuspiciousNameCombination
+  const y = u.x
+  return { x, y }
+}
+
+export function isInCollinearSegment (s1: T, s2: T, p: T): boolean {
+  if (fpop.neq(s1.x, s2.x)) {
+    // segment is not vertical
+    if (fpop.lte(s1.x, p.x, s2.x)) return true
+    if (fpop.gte(s1.x, p.x, s2.x)) return true
+  } else {
+    // segment is vertical
+    if (fpop.lte(s1.y, p.y, s2.y)) return true
+    if (fpop.gte(s1.y, p.y, s2.y)) return true
+  }
+  return false
 }
