@@ -12,6 +12,11 @@ export default {
     node(),
     typescript({
       typescript: require('typescript'),
+      tsconfigOverride: {
+        compilerOptions: {
+          declaration: false,
+        }
+      }
     }),
     copy({
       './src/demo/index.html': './demo/index.html',

@@ -21,9 +21,7 @@ const points = [
 ]
 
 const area = new Area(points)
-
-const segments = [...pairwiseCircular(points)]
-  .map(([p1, p2]) => new Segment(p1, p2))
+const segments = Segment.Polygon(points).map(s => s.asVector())
 
 const referentPoint = new Point(300, 200)
   .setSize(8)

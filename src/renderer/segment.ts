@@ -15,6 +15,7 @@ export default class Segment extends Object<LineAttributes> {
   protected attributes: Partial<LineAttributes> = {
     color: undefined,
     isVisible: undefined,
+    isVector: undefined,
     label: undefined,
     style: undefined,
     width: undefined,
@@ -49,6 +50,19 @@ export default class Segment extends Object<LineAttributes> {
     ctx.beginPath()
     ctx.moveTo(this.p1.x + offset, this.p1.y + offset)
     ctx.lineTo(this.p2.x + offset, this.p2.y + offset)
+
+    if (this.attributes.isVector) {
+      const angle = Math.PI / 12
+      const length = 12
+
+      const left = Point.setSegmentLength(this.p2, Point.rotateWrt(this.p1, angle, this.p2), length)
+      const right = Point.setSegmentLength(this.p2, Point.rotateWrt(this.p1, -angle, this.p2), length)
+
+      ctx.lineTo(left.x + offset, left.y + offset)
+      ctx.moveTo(this.p2.x + offset, this.p2.y + offset)
+      ctx.lineTo(right.x + offset, right.y + offset)
+    }
+
     ctx.stroke()
     ctx.restore()
 
@@ -89,6 +103,11 @@ export default class Segment extends Object<LineAttributes> {
 
   public toggleVisibility (): this {
     this.attributes.isVisible = !this.attributes.isVisible
+    return this
+  }
+
+  public asVector (v: boolean = true): this {
+    this.attributes.isVector = v
     return this
   }
 

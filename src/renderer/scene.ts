@@ -22,6 +22,7 @@ export interface LineAttributes {
   style: LineStyle
   label: string
   isVisible: boolean
+  isVector: boolean
 }
 
 export const enum AreaShadeStyle {
@@ -333,6 +334,7 @@ export default class Scene {
     style: LineStyle.Solid,
     label: '',
     isVisible: true,
+    isVector: false,
   }
 
   public setDefaultLineAttributes (attributes: LineAttributes): this {

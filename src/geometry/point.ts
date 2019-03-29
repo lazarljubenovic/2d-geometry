@@ -49,6 +49,18 @@ export function scalarMul (scalar: number, point: T): T {
   return { x, y }
 }
 
+export function setLength (point: T, desiredLength: number): T {
+  const currLength = getLength(point)
+  const ratio = desiredLength / currLength
+  return scalarMul(ratio, point)
+}
+
+export function setSegmentLength (pivot: T, point: T, desiredLength: number): T {
+  const moved = sub(point, pivot)
+  const scaled = setLength(moved, desiredLength)
+  return add(scaled, pivot)
+}
+
 export function dotProd (a: T, b: T): number {
   return a.x * b.x + a.y * b.y
 }
@@ -57,6 +69,16 @@ export function getDistance (a: T, b: T): number {
   const x = a.x - b.x
   const y = a.y - b.y
   return Math.hypot(x, y)
+}
+
+export function getLength (t: T): number {
+  const { x, y } = t
+  return Math.hypot(x, y)
+}
+
+export function getAngle (t: T): number {
+  const { x, y } = t
+  return Math.atan2(y, x)
 }
 
 export function snapTo (point: T, snap: number): T {
@@ -100,4 +122,25 @@ export function isInCollinearSegment (s1: T, s2: T, p: T): boolean {
     if (fpop.gte(s1.y, p.y, s2.y)) return true
   }
   return false
+}
+
+export function rotate (t: T, angle: number): T {
+  const s = Math.sin(angle)
+  const c = Math.cos(angle)
+
+  const x = t.x * c + t.y * s
+  const y = - t.x * s + t.y * c
+
+  return { x, y }
+}
+
+export function rotateWrt (point: T, angle: number, pivot: T): T {
+  const moved = sub(point, pivot)
+  const rotated = rotate(moved, angle)
+  const movedBack = add(rotated, pivot)
+  return movedBack
+}
+
+export function toString (t: T): string {
+  return `(${t.x}, ${t.y})`
 }
