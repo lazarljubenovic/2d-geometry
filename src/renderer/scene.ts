@@ -132,7 +132,7 @@ export default class Scene {
         this.ctx.save()
         const { x, y } = this._selectedPoint
         this.ctx.beginPath()
-        this.ctx.fillStyle = Colors.Clrs.BLUE + 'AA'
+        this.ctx.fillStyle = this._selectedPoint.getAttributes().color + 'BB'
         this.ctx.arc(x + offset, y + offset, 10, 0, 2 * Math.PI, false)
         this.ctx.fill()
         this.ctx.restore()
