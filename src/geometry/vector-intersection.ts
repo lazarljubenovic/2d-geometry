@@ -1,11 +1,62 @@
 import * as Point from './point'
+import { T } from './point'
 import * as Line from './line'
 import * as fpop from 'fpop'
 
-export const enum Existence {
-  NO,
-  YES,
-  OVERLAP,
+export const enum Type1D {
+  None = 0,
+  Regular = 1 << 0,
+  SP1 = 1 << 1,
+  SP2 = 1 << 2,
+}
+
+/**
+ * Assumes segment is not degenerate and given points are collinear.
+ */
+function isOnSegment (sp1: T, sp2: T, p: T): Type1D {
+  if (Point.eq(sp1, p)) return Type1D.SP1
+  if (Point.eq(sp2, p)) return Type1D.SP2
+  if (fpop.neq(sp1.x, sp2.x)) {
+    // segment is not vertical
+    if (fpop.lt(sp1.x, p.x, sp2.x)) return Type1D.Regular
+    if (fpop.gt(sp1.x, p.x, sp2.x)) return Type1D.Regular
+  } else {
+    // segment is vertical
+    if (fpop.lte(sp1.y, p.y, sp2.y)) return Type1D.Regular
+    if (fpop.gte(sp1.y, p.y, sp2.y)) return Type1D.Regular
+  }
+  return Type1D.None
+}
+
+export const enum Type {
+  None,
+  Point,
+  Segment,
+}
+
+export const enum Flags {
+  None = 0,
+  Parallel = 1 << 0,
+  Collinear = 1 << 1,
+  U1 = 1 << 2,
+  U2 = 1 << 3,
+  V1 = 1 << 4,
+  V2 = 1 << 5,
+  DegenerateU = 1 << 6,
+  DegenerateV = 1 << 7,
+}
+
+export function printFlags (flags: Flags) {
+  const names: string[] = []
+  if (flags & Flags.Parallel) names.push('Parallel')
+  if (flags & Flags.Collinear) names.push('Collinear')
+  if (flags & Flags.U1) names.push('U1')
+  if (flags & Flags.U2) names.push('U2')
+  if (flags & Flags.V1) names.push('V1')
+  if (flags & Flags.V2) names.push('V2')
+  if (flags & Flags.DegenerateU) names.push('DegenerateU')
+  if (flags & Flags.DegenerateV) names.push('DegenerateV')
+  return names.join(' ')
 }
 
 export function exists (
@@ -13,40 +64,42 @@ export function exists (
   v12: Point.T,
   v21: Point.T,
   v22: Point.T,
-): Existence {
+): Type {
   const line1 = Line.getGeneralFormFromSegment(v11, v12)
   const n1 = Line.equation(v21, line1)
   const n2 = Line.equation(v22, line1)
-  if (fpop.arePositive(n1, n2) || fpop.areNegative(n1, n2)) return Existence.NO
+  if (fpop.arePositive(n1, n2) || fpop.areNegative(n1, n2)) return Type.None
 
   const line2 = Line.getGeneralFormFromSegment(v21, v22)
   const m1 = Line.equation(v11, line2)
   const m2 = Line.equation(v12, line2)
-  if (fpop.arePositive(m1, m2) || fpop.areNegative(m1, m2)) return Existence.NO
+  if (fpop.arePositive(m1, m2) || fpop.areNegative(m1, m2)) return Type.Point
 
-  if (fpop.eq(line1.a * line2.b, line2.a * line1.b)) return Existence.OVERLAP
+  if (fpop.eq(line1.a * line2.b, line2.a * line1.b)) return Type.Segment
 
-  return Existence.YES
+  return Type.Point
 }
 
-
-type Result = {
-  type: Existence.NO | Existence.OVERLAP
-  point: null
+export type Result = ({ flags: Flags }) & ({
+  type: Type.None
 } | {
-  type: Existence.YES
+  type: Type.Point
   point: Point.T
-}
+} | {
+  type: Type.Segment
+  point1: Point.T
+  point2: Point.T
+})
 
 export function find (
-  s1p1: Point.T,
-  s1p2: Point.T,
-  s2p1: Point.T,
-  s2p2: Point.T,
+  u1: Point.T,
+  u2: Point.T,
+  v1: Point.T,
+  v2: Point.T,
 ): Result {
-  const u = Point.sub(s1p2, s1p1)
-  const v = Point.sub(s2p2, s2p1)
-  const w = Point.sub(s1p1, s2p1)
+  const u = Point.sub(u2, u1)
+  const v = Point.sub(v2, v1)
+  const w = Point.sub(u1, v1)
   const d = Point.perpProd(u, v)
 
   if (fpop.isZero(d)) {
@@ -54,7 +107,10 @@ export function find (
 
     if (!fpop.areZero(Point.perpProd(u, w), Point.perpProd(v, w))) {
       // parallel but not collinear, so no intersection
-      return { type: Existence.NO, point: null }
+      return {
+        type: Type.None,
+        flags: Flags.Parallel,
+      }
     }
 
     // segments are collinear or degenerate
@@ -63,78 +119,150 @@ export function find (
 
     if (fpop.areZero(du, dv)) {
       // both segments are points
-      if (!Point.eq(s1p1, s2p1)) {
+      if (!Point.eq(u1, v1)) {
         // distinct points, so no intersection
-        return { type: Existence.NO, point: null }
+        return {
+          type: Type.None,
+          flags: Flags.Collinear | Flags.DegenerateU | Flags.DegenerateV,
+        }
       }
       // they are the same point
-      return { type: Existence.YES, point: s1p1 }
+      return {
+        type: Type.Point,
+        point: Point.clone(u1),
+        flags: Flags.Collinear | Flags.DegenerateU | Flags.DegenerateV | Flags.U1 | Flags.U2 | Flags.V1 | Flags.V2,
+      }
     }
 
     if (fpop.isZero(du)) {
       // s1 is a single point
-      if (!Point.isInCollinearSegment(s2p1, s2p2, s1p1)) {
-        // s1 is not in s2
-        return { type: Existence.NO, point: null }
+      const result = isOnSegment(v1, v2, u1)
+      let flags = Flags.DegenerateU
+      if (result == Type1D.None) {
+        return { type: Type.None, flags }
       }
-      // s1 is in s2
-      return { type: Existence.YES, point: s1p1 }
+      flags |= Flags.Collinear | Flags.U1 | Flags.U2
+      if (result == Type1D.SP1) flags |= Flags.V1
+      if (result == Type1D.SP2) flags |= Flags.V2
+      return {
+        type: Type.Point,
+        point: Point.clone(u1),
+        flags,
+      }
     }
 
     if (fpop.isZero(dv)) {
-      if (!Point.isInCollinearSegment(s1p1, s1p2, s2p1)) {
-        // s2 is not in s1
-        return { type: Existence.NO, point: null }
+      // s2 is a single point
+      const result = isOnSegment(u1, u2, v1)
+      let flags = Flags.DegenerateV
+      if (result == Type1D.None) {
+        return { type: Type.None, flags }
       }
-      // s2 is in s1
-      return { type: Existence.YES, point: s2p1 }
+      flags |= Flags.Collinear | Flags.V1 | Flags.V2
+      if (result == Type1D.SP1) flags |= Flags.U1
+      if (result == Type1D.SP2) flags |= Flags.U2
+      return {
+        type: Type.Point,
+        point: Point.clone(v1),
+        flags,
+      }
     }
+
+    // not degenerate
 
     // collinear segments, so now we look for an overlap
-    // define t0 and t1 as endpoints of s1 in equation for s2
-    let t0: number
+    // define t1 and t2 as endpoints of u in parametric equation for v
     let t1: number
-    const w2 = Point.sub(s1p2, s2p1)
+    let t2: number
+    const w2 = Point.sub(u2, v1)
+
+    let flags: Flags = Flags.Collinear | Flags.Parallel
 
     if (!fpop.isZero(v.x)) {
-      t0 = w.x / v.x
-      t1 = w2.x / v.x
+      t1 = w.x / v.x
+      t2 = w2.x / v.x
     } else {
-      t0 = w.y / v.y
-      t1 = w2.y / v.y
+      t1 = w.y / v.y
+      t2 = w2.y / v.y
     }
 
-    if (fpop.gt(t0, t1)) {
-      [t0, t1] = [t1, t0]
+    let flipped: boolean = false
+    if (fpop.gt(t1, t2)) {
+      [t1, t2] = [t2, t1]
+      flipped = true
     }
 
-    if (fpop.gt(t0, 1) || fpop.lt(t1, 0)) {
-      return { type: Existence.NO, point: null }
+    if (fpop.gt(t1, 1) || fpop.lt(t2, 0)) {
+      // collinear, but no overlap
+      return {
+        type: Type.None,
+        flags: Flags.Parallel | Flags.Collinear,
+      }
     }
 
-    t0 = fpop.isNegative(t0) ? 0 : t0 // clip to at least 0
-    t1 = fpop.isPositive(t0) ? 1 : t1 // clip to at most 1
 
-    if (fpop.eq(t0, t1)) {
-      const point = Point.add(s2p1, Point.scalarMul(t0, v))
-      return { type: Existence.YES, point }
+    if (fpop.lte(0, t1, 1)) flags |= !flipped ? Flags.U1 : Flags.U2
+    if (fpop.lte(0, t2, 1)) flags |= !flipped ? Flags.U2 : Flags.U1
+
+    t1 = fpop.lt(t1, 0) ? 0 : t1 // clip to at least 0
+    t2 = fpop.gt(t2, 1) ? 1 : t2 // clip to at most 1
+
+    if (fpop.eq(t1, 0) || fpop.eq(t2, 0)) flags |= Flags.V1
+    if (fpop.eq(t1, 1) || fpop.eq(t2, 1)) flags |= Flags.V2
+
+    if (fpop.eq(t1, t2)) {
+      // collinear and touching at a point
+      const point = Point.add(v1, Point.scalarMul(t1, v))
+      return {
+        type: Type.Point,
+        point,
+        flags,
+      }
     }
 
-    // overlap in sub-segment
-    // const point1 = Point.add(s2p1, Point.scalarMul(t0, v))
-    // const point2 = Point.add(s2p1, Point.scalarMul(t1, v))
-    return { type: Existence.OVERLAP, point: null }
+    // overlap in sub-segment,
+    // or even two identical segments
+    const point1 = Point.add(v1, Point.scalarMul(t1, v))
+    const point2 = Point.add(v1, Point.scalarMul(t2, v))
+    return {
+      type: Type.Segment,
+      point1,
+      point2,
+      flags,
+    }
   }
 
   // the segments are skew and may intersect in a point
-  // get the intersect parameter for s1
-  const si = Point.perpProd(v, w) / d
-  if (fpop.lt(si, 0) || fpop.gt(si, 1)) return { type: Existence.NO, point: null }
+  // get the intersect parameter for u
+  const ui = Point.perpProd(v, w) / d
+  if (fpop.lt(ui, 0) || fpop.gt(ui, 1)) {
+    return {
+      type: Type.None,
+      flags: Flags.None,
+    }
+  }
 
-  const ti = Point.perpProd(u, w) / d
-  if (fpop.lt(ti, 0) || fpop.gt(ti, 1)) return { type: Existence.NO, point: null }
+  // get intersect parameter for v
+  const vi = Point.perpProd(u, w) / d
+  if (fpop.lt(vi, 0) || fpop.gt(vi, 1)) {
+    return {
+      type: Type.None,
+      flags: Flags.None,
+    }
+  }
 
-  const point = Point.add(s1p1, Point.scalarMul(si, u))
-  return { type: Existence.YES, point }
+  const point = Point.add(u1, Point.scalarMul(ui, u))
+  let flags: Flags = Flags.None
+
+  if (Point.eq(point, u1)) flags |= Flags.U1
+  if (Point.eq(point, u2)) flags |= Flags.U2
+  if (Point.eq(point, v1)) flags |= Flags.V1
+  if (Point.eq(point, v2)) flags |= Flags.V2
+
+  return {
+    type: Type.Point,
+    point,
+    flags,
+  }
 
 }

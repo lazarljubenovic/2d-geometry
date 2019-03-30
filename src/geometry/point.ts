@@ -18,6 +18,10 @@ export function y (t: T): number {
   return t.y
 }
 
+export function clone (t: T): T {
+  return New(t.x, t.y)
+}
+
 export function eq (...points: T[]): boolean {
   return fpop.eq(...points.map(x)) && fpop.eq(...points.map(y))
 }
@@ -111,25 +115,12 @@ export function perp (u: T): T {
   return { x, y }
 }
 
-export function isInCollinearSegment (s1: T, s2: T, p: T): boolean {
-  if (fpop.neq(s1.x, s2.x)) {
-    // segment is not vertical
-    if (fpop.lte(s1.x, p.x, s2.x)) return true
-    if (fpop.gte(s1.x, p.x, s2.x)) return true
-  } else {
-    // segment is vertical
-    if (fpop.lte(s1.y, p.y, s2.y)) return true
-    if (fpop.gte(s1.y, p.y, s2.y)) return true
-  }
-  return false
-}
-
 export function rotate (t: T, angle: number): T {
   const s = Math.sin(angle)
   const c = Math.cos(angle)
 
   const x = t.x * c + t.y * s
-  const y = - t.x * s + t.y * c
+  const y = -t.x * s + t.y * c
 
   return { x, y }
 }

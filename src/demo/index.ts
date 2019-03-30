@@ -21,7 +21,7 @@ const points = [
 ]
 
 const area = new Area(points)
-const segments = Segment.Polygon(points).map(s => s.asVector())
+const segments = Segment.Polygon(points).map(s => s.asVector().setWidth(10))
 
 const referentPoint = new Point(300, 200)
   .setSize(8)
@@ -48,7 +48,7 @@ function getIntersectionCount (p1: Geo.Point.T, p2: Geo.Point.T, polygon: Geo.Po
   const polygonSegments = pairwiseCircular(points)
   for (const [poly1, poly2] of polygonSegments) {
     const intersectionResult = Geo.VectorIntersection.exists(p1, p2, poly1, poly2)
-    if (intersectionResult == Geo.VectorIntersection.Existence.YES) {
+    if (intersectionResult == Geo.VectorIntersection.Type.REGULAR) {
       numberOfIntersections++
     }
   }

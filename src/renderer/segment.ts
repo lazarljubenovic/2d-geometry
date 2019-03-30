@@ -58,8 +58,9 @@ export default class Segment extends Object<LineAttributes> {
       const left = Point.setSegmentLength(this.p2, Point.rotateWrt(this.p1, angle, this.p2), length)
       const right = Point.setSegmentLength(this.p2, Point.rotateWrt(this.p1, -angle, this.p2), length)
 
-      ctx.lineTo(left.x + offset, left.y + offset)
-      ctx.moveTo(this.p2.x + offset, this.p2.y + offset)
+      ctx.lineCap = 'butt'
+      ctx.moveTo(left.x + offset, left.y + offset)
+      ctx.lineTo(this.p2.x + offset, this.p2.y + offset)
       ctx.lineTo(right.x + offset, right.y + offset)
     }
 
