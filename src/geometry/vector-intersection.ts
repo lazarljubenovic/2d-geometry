@@ -28,7 +28,7 @@ function isOnSegment (sp1: T, sp2: T, p: T): Type1D {
   return Type1D.None
 }
 
-export const enum Type {
+export const enum IntersectionType {
   None,
   Point,
   Segment,
@@ -64,55 +64,51 @@ export function exists (
   v12: Point.T,
   v21: Point.T,
   v22: Point.T,
-): Type {
+): IntersectionType {
   const line1 = Line.getGeneralFormFromSegment(v11, v12)
   const n1 = Line.equation(v21, line1)
   const n2 = Line.equation(v22, line1)
-  if (fpop.arePositive(n1, n2) || fpop.areNegative(n1, n2)) return Type.None
+  if (fpop.arePositive(n1, n2) || fpop.areNegative(n1, n2)) return IntersectionType.None
 
   const line2 = Line.getGeneralFormFromSegment(v21, v22)
   const m1 = Line.equation(v11, line2)
   const m2 = Line.equation(v12, line2)
-  if (fpop.arePositive(m1, m2) || fpop.areNegative(m1, m2)) return Type.Point
+  if (fpop.arePositive(m1, m2) || fpop.areNegative(m1, m2)) return IntersectionType.Point
 
-  if (fpop.eq(line1.a * line2.b, line2.a * line1.b)) return Type.Segment
+  if (fpop.eq(line1.a * line2.b, line2.a * line1.b)) return IntersectionType.Segment
 
-  return Type.Point
+  return IntersectionType.Point
 }
 
 export type Result = ({ flags: Flags }) & ({
-  type: Type.None
+  type: IntersectionType.None
 } | {
-  type: Type.Point
+  type: IntersectionType.Point
   point: Point.T
 } | {
-  type: Type.Segment
+  type: IntersectionType.Segment
   point1: Point.T
   point2: Point.T
 })
 
-export function find (
+export function analyze (
   u1: Point.T,
   u2: Point.T,
   v1: Point.T,
   v2: Point.T,
-  tu1: number = 0,
-  tu2: number = 0,
-  tv1: number = 0,
-  tv2: number = 0,
 ): Result {
   const u = Point.sub(u2, u1)
   const v = Point.sub(v2, v1)
-  const w = Point.sub(u1, v1)
+  const w1 = Point.sub(u1, v1)
   const d = Point.perpProd(u, v)
 
   if (fpop.isZero(d)) {
-    // segments are parallel
+    // parallel
 
-    if (!fpop.areZero(Point.perpProd(u, w), Point.perpProd(v, w))) {
+    if (!fpop.areZero(Point.perpProd(u, w1), Point.perpProd(v, w1))) {
       // parallel but not collinear, so no intersection
       return {
-        type: Type.None,
+        type: IntersectionType.None,
         flags: Flags.Parallel,
       }
     }
@@ -126,13 +122,13 @@ export function find (
       if (!Point.eq(u1, v1)) {
         // distinct points, so no intersection
         return {
-          type: Type.None,
+          type: IntersectionType.None,
           flags: Flags.Collinear | Flags.DegenerateU | Flags.DegenerateV,
         }
       }
       // they are the same point
       return {
-        type: Type.Point,
+        type: IntersectionType.Point,
         point: Point.clone(u1),
         flags: Flags.Collinear | Flags.DegenerateU | Flags.DegenerateV | Flags.U1 | Flags.U2 | Flags.V1 | Flags.V2,
       }
@@ -143,13 +139,13 @@ export function find (
       const result = isOnSegment(v1, v2, u1)
       let flags = Flags.DegenerateU
       if (result == Type1D.None) {
-        return { type: Type.None, flags }
+        return { type: IntersectionType.None, flags }
       }
       flags |= Flags.Collinear | Flags.U1 | Flags.U2
       if (result == Type1D.SP1) flags |= Flags.V1
       if (result == Type1D.SP2) flags |= Flags.V2
       return {
-        type: Type.Point,
+        type: IntersectionType.Point,
         point: Point.clone(u1),
         flags,
       }
@@ -160,13 +156,13 @@ export function find (
       const result = isOnSegment(u1, u2, v1)
       let flags = Flags.DegenerateV
       if (result == Type1D.None) {
-        return { type: Type.None, flags }
+        return { type: IntersectionType.None, flags }
       }
       flags |= Flags.Collinear | Flags.V1 | Flags.V2
       if (result == Type1D.SP1) flags |= Flags.U1
       if (result == Type1D.SP2) flags |= Flags.U2
       return {
-        type: Type.Point,
+        type: IntersectionType.Point,
         point: Point.clone(v1),
         flags,
       }
@@ -183,10 +179,10 @@ export function find (
     let flags: Flags = Flags.Collinear | Flags.Parallel
 
     if (!fpop.isZero(v.x)) {
-      t1 = w.x / v.x
+      t1 = w1.x / v.x
       t2 = w2.x / v.x
     } else {
-      t1 = w.y / v.y
+      t1 = w1.y / v.y
       t2 = w2.y / v.y
     }
 
@@ -199,11 +195,10 @@ export function find (
     if (fpop.gt(t1, 1) || fpop.lt(t2, 0)) {
       // collinear, but no overlap
       return {
-        type: Type.None,
+        type: IntersectionType.None,
         flags: Flags.Parallel | Flags.Collinear,
       }
     }
-
 
     if (fpop.lte(0, t1, 1)) flags |= !flipped ? Flags.U1 : Flags.U2
     if (fpop.lte(0, t2, 1)) flags |= !flipped ? Flags.U2 : Flags.U1
@@ -218,7 +213,7 @@ export function find (
       // collinear and touching at a point
       const point = Point.add(v1, Point.scalarMul(t1, v))
       return {
-        type: Type.Point,
+        type: IntersectionType.Point,
         point,
         flags,
       }
@@ -229,7 +224,7 @@ export function find (
     const point1 = Point.add(v1, Point.scalarMul(t1, v))
     const point2 = Point.add(v1, Point.scalarMul(t2, v))
     return {
-      type: Type.Segment,
+      type: IntersectionType.Segment,
       point1,
       point2,
       flags,
@@ -238,19 +233,19 @@ export function find (
 
   // the segments are skew and may intersect in a point
   // get the intersect parameter for u
-  const ui = Point.perpProd(v, w) / d
+  const ui = Point.perpProd(v, w1) / d
   if (fpop.lt(ui, 0) || fpop.gt(ui, 1)) {
     return {
-      type: Type.None,
+      type: IntersectionType.None,
       flags: Flags.None,
     }
   }
 
   // get intersect parameter for v
-  const vi = Point.perpProd(u, w) / d
+  const vi = Point.perpProd(u, w1) / d
   if (fpop.lt(vi, 0) || fpop.gt(vi, 1)) {
     return {
-      type: Type.None,
+      type: IntersectionType.None,
       flags: Flags.None,
     }
   }
@@ -264,7 +259,7 @@ export function find (
   if (Point.eq(point, v2)) flags |= Flags.V2
 
   return {
-    type: Type.Point,
+    type: IntersectionType.Point,
     point,
     flags,
   }

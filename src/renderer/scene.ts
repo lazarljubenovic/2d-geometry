@@ -22,7 +22,11 @@ export interface LineAttributes {
   isVisible: boolean
 }
 
-export interface SegmentAttributes extends LineAttributes {
+export interface SegmentAttributes {
+  color: string
+  width: number
+  style: LineStyle
+  isVisible: boolean
   label: string
   isVector: boolean
 }
