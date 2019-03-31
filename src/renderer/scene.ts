@@ -2,7 +2,6 @@ import Object from './object'
 import Point from './point'
 import * as Geo from '../geometry'
 import * as utils from '../utils'
-import * as Colors from '../colors'
 
 export interface PointAttributes {
   color: string
@@ -20,8 +19,11 @@ export interface LineAttributes {
   color: string
   width: number
   style: LineStyle
-  label: string
   isVisible: boolean
+}
+
+export interface SegmentAttributes extends LineAttributes {
+  label: string
   isVector: boolean
 }
 
@@ -61,13 +63,33 @@ export default class Scene {
   protected _snapToGrid: boolean = true
   protected _renderOffset: number = 0
 
-  public get isGridOn (): boolean { return this._isGridOn }
-  public get gridOffsetX(): number { return this._gridOffsetX }
-  public get gridOffsetY(): number { return this._gridOffsetY }
-  public get gridSize (): number { return this._gridSize }
-  public get gridColor (): string { return this._gridColor }
-  public get snapToGrid (): boolean { return this._snapToGrid }
-  public get renderOffset (): number { return this._renderOffset }
+  public get isGridOn (): boolean {
+    return this._isGridOn
+  }
+
+  public get gridOffsetX (): number {
+    return this._gridOffsetX
+  }
+
+  public get gridOffsetY (): number {
+    return this._gridOffsetY
+  }
+
+  public get gridSize (): number {
+    return this._gridSize
+  }
+
+  public get gridColor (): string {
+    return this._gridColor
+  }
+
+  public get snapToGrid (): boolean {
+    return this._snapToGrid
+  }
+
+  public get renderOffset (): number {
+    return this._renderOffset
+  }
 
   // Array of functions that get called when events happen
   protected onUpdateFns: Array<() => void> = []
@@ -93,8 +115,7 @@ export default class Scene {
   public clear () {
     const w = this.getWidth()
     const h = this.getHeight()
-    const ctx = this.ctx
-    ctx.clearRect(0, 0, w, h)
+    this.ctx.clearRect(0, 0, w, h)
   }
 
   public drawGrid (): this {
@@ -201,6 +222,7 @@ export default class Scene {
   }
 
   private updateNearestPointBasedOnCursor (cursor: Geo.Point.T) {
+    if (this.points.length == 0) return
     const nearestPoint = Geo.Point.findClosestPoint(cursor, this.points)
     const result = nearestPoint.distance < 10 ? nearestPoint.point : null
     if (result == null) return this._selectedPoint = null
@@ -326,15 +348,13 @@ export default class Scene {
     return { ...this.defaultPointAttributes }
   }
 
-  // Lines
+  // Line
 
   private defaultLineAttributes: LineAttributes = {
     color: 'black',
     width: 1,
     style: LineStyle.Solid,
-    label: '',
     isVisible: true,
-    isVector: false,
   }
 
   public setDefaultLineAttributes (attributes: LineAttributes): this {
@@ -344,6 +364,26 @@ export default class Scene {
 
   public getDefaultLineAttributes (): LineAttributes {
     return { ...this.defaultLineAttributes }
+  }
+
+  // Segment
+
+  private defaultSegmentAttributes: SegmentAttributes = {
+    color: 'black',
+    width: 1,
+    style: LineStyle.Solid,
+    label: '',
+    isVisible: true,
+    isVector: false,
+  }
+
+  public setDefaultSegmentAttributes (attributes: SegmentAttributes): this {
+    this.defaultSegmentAttributes = attributes
+    return this
+  }
+
+  public getDefaultSegmentAttributes (): SegmentAttributes {
+    return { ...this.defaultSegmentAttributes }
   }
 
   // Area

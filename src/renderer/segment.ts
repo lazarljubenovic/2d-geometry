@@ -1,18 +1,17 @@
 import Object from './object'
 import { Point } from '../geometry'
 import { override } from '../utils'
-import { LineAttributes, LineStyle } from './scene'
-import PointObject from './point'
+import { LineStyle, SegmentAttributes } from './scene'
 import * as its from '@lazarljubenovic/iterators'
 
-export default class Segment extends Object<LineAttributes> {
+export default class Segment extends Object<SegmentAttributes> {
 
   public static Polygon (points: Point.T[]): Segment[] {
     return [...its.pairwiseCircular(points)]
       .map(([p1, p2]) => new Segment(p1, p2))
   }
 
-  protected attributes: Partial<LineAttributes> = {
+  protected attributes: Partial<SegmentAttributes> = {
     color: undefined,
     isVisible: undefined,
     isVector: undefined,
@@ -34,7 +33,7 @@ export default class Segment extends Object<LineAttributes> {
   }
 
   public getAttributes () {
-    const defaultAttributes = this.getScene().getDefaultLineAttributes()
+    const defaultAttributes = this.getScene().getDefaultSegmentAttributes()
     return override(defaultAttributes, this.attributes)
   }
 

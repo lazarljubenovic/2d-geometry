@@ -96,6 +96,10 @@ export function find (
   u2: Point.T,
   v1: Point.T,
   v2: Point.T,
+  tu1: number = 0,
+  tu2: number = 0,
+  tv1: number = 0,
+  tv2: number = 0,
 ): Result {
   const u = Point.sub(u2, u1)
   const v = Point.sub(v2, v1)
