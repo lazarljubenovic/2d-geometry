@@ -2,6 +2,7 @@ import Object from './object'
 import Point from './point'
 import * as Geo from '../geometry'
 import * as utils from '../utils'
+import { Colors } from '../index'
 
 export interface PointAttributes {
   color: string
@@ -336,7 +337,7 @@ export default class Scene {
   // Point
 
   private defaultPointAttributes: PointAttributes = {
-    color: 'black',
+    color: Colors.Clrs.BLACK,
     size: 2,
     label: '',
     isVisible: true,
@@ -355,7 +356,7 @@ export default class Scene {
   // Line
 
   private defaultLineAttributes: LineAttributes = {
-    color: 'black',
+    color: Colors.Clrs.BLACK,
     width: 1,
     style: LineStyle.Solid,
     isVisible: true,
@@ -373,7 +374,7 @@ export default class Scene {
   // Segment
 
   private defaultSegmentAttributes: SegmentAttributes = {
-    color: 'black',
+    color: Colors.Clrs.BLACK,
     width: 1,
     style: LineStyle.Solid,
     label: '',
