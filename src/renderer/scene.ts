@@ -117,10 +117,11 @@ export default class Scene {
     return this.ctx.canvas.height
   }
 
-  public clear () {
+  public clear (): this {
     const w = this.getWidth()
     const h = this.getHeight()
     this.ctx.clearRect(0, 0, w, h)
+    return this
   }
 
   public drawGrid (): this {
@@ -188,10 +189,11 @@ export default class Scene {
     return this
   }
 
-  public redraw () {
+  public redraw (): this {
     this.clear()
     this.onUpdateFns.forEach(fn => fn())
     this.drawAll()
+    return this
   }
 
   public add (...objects: Object[]): this {
@@ -257,18 +259,20 @@ export default class Scene {
     this.redraw()
   }
 
-  private addEventListeners () {
+  private addEventListeners (): this {
     const canvas = this.ctx.canvas
     canvas.addEventListener('mousemove', this.onMouseMove)
     canvas.addEventListener('mousedown', this.onMouseDown)
     document.addEventListener('mouseup', this.onMouseUp)
+    return this
   }
 
-  private removeEventListeners () {
+  private removeEventListeners (): this {
     const canvas = this.ctx.canvas
     canvas.removeEventListener('mousemove', this.onMouseMove)
     canvas.removeEventListener('mousedown', this.onMouseDown)
     document.removeEventListener('mouseup', this.onMouseUp)
+    retun this
   }
 
   // Tweak various settings
