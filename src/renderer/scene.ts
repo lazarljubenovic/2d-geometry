@@ -117,6 +117,17 @@ export default class Scene {
     return this.ctx.canvas.height
   }
 
+  public getPoints (): Geo.Point.T[] {
+    const w = this.getWidth()
+    const h = this.getHeight()
+    return [
+      Geo.Point.New(0, 0),
+      Geo.Point.New(0, h),
+      Geo.Point.New(w, h),
+      Geo.Point.New(w, 0),
+    ]
+  }
+
   public clear (): this {
     const w = this.getWidth()
     const h = this.getHeight()
@@ -272,7 +283,7 @@ export default class Scene {
     canvas.removeEventListener('mousemove', this.onMouseMove)
     canvas.removeEventListener('mousedown', this.onMouseDown)
     document.removeEventListener('mouseup', this.onMouseUp)
-    retun this
+    return this
   }
 
   // Tweak various settings
