@@ -9,8 +9,8 @@ const ctx = canvas.getContext('2d')!
 const scene = new Scene(ctx)
 
 const points = [
-  new Point(460, 180),
-  new Point(400, 240),
+  new Point(460, 180).setLabel('A').setColor(Colors.Clrs.RED).setSize(5),
+  new Point(400, 240).setLabel('B'),
   new Point(860, 240),
   new Point(860, 280),
   new Point(400, 280),
@@ -21,7 +21,7 @@ const points = [
 ]
 
 const area = new Area(points)
-const segments = Segment.Polygon(points).map(s => s.asVector().setWidth(10))
+const segments = Segment.Polygon(points)
 
 const referentPoint = new Point(300, 200)
   .setSize(8)
@@ -39,7 +39,7 @@ update()
 
 scene
   .setSize(1000, 600)
-  .add(...points, referentPoint, area, ...segments)
+  .add(area, ...segments, ...points, referentPoint)
   .onUpdate(update)
   .drawAll()
 

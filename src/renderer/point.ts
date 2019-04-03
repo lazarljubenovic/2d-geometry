@@ -33,10 +33,25 @@ export default class extends Object<PointAttributes> implements Point.T {
     if (!attrs.isVisible) return this
 
     const offset = this.getScene().renderOffset
+    const x = this.x + offset
+    const y = this.y + offset
+
     ctx.save()
     ctx.fillStyle = attrs.color
     ctx.beginPath()
-    ctx.arc(this.x + offset, this.y + offset, attrs.size, 0, 2 * Math.PI)
+    ctx.arc(x, y, attrs.size, 0, 2 * Math.PI)
+
+    if (attrs.label != '') {
+      ctx.font = 'italic 12pt "Computer Modern", serif'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.strokeStyle = 'white'
+      ctx.lineWidth = 2
+      const distance = attrs.size + 10
+      ctx.strokeText(attrs.label, x + distance, y)
+      ctx.fillText(attrs.label, x + distance, y)
+    }
+
     ctx.fill()
     ctx.restore()
 
