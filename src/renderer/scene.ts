@@ -41,6 +41,15 @@ export interface AreaAttributes {
   style: AreaShadeStyle
 }
 
+export const enum CircleStyle {
+  Solid,
+}
+
+export interface CircleAttributes {
+  color: string
+  style: CircleStyle
+}
+
 export default class Scene {
 
   // Objects in the scene, looped for rendering.
@@ -413,13 +422,29 @@ export default class Scene {
     style: AreaShadeStyle.Solid,
   }
 
-  public setDefaultAreaAttibutes (attributes: AreaAttributes): this {
+  public setDefaultAreaAttributes (attributes: AreaAttributes): this {
     this.defaultAreaAttributes = attributes
     return this
   }
 
   public getDefaultAreaAttributes (): AreaAttributes {
     return { ...this.defaultAreaAttributes }
+  }
+
+  // Circle
+
+  private defaultCircleAttributes: CircleAttributes = {
+    color: 'rgba(0, 0, 0)',
+    style: CircleStyle.Solid,
+  }
+
+  public setDefaultCircleAttributes (attributes: CircleAttributes): this {
+    this.defaultCircleAttributes = attributes
+    return this
+  }
+
+  public getDefaultCircleAttributes (): CircleAttributes {
+    return { ...this.defaultCircleAttributes }
   }
 
 }

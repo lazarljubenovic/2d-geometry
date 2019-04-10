@@ -2,6 +2,7 @@ import { Area, Point, Scene, Segment } from '../renderer'
 import * as Colors from '../colors'
 import * as Geo from '../geometry'
 import { pairwiseCircular } from '../utils'
+import Circle from '../renderer/circle'
 
 const canvas = document.createElement('canvas')
 document.body.append(canvas)
@@ -23,6 +24,14 @@ const points = [
 const area = new Area(points)
 const segments = Segment.Polygon(points)
 
+const circle = new Circle(points[2], 50)
+
+function virtual () {
+  const intersectionGeo = Geo.algorithms.closestPointOnLineToPoint(points[4], points[5], points[2])
+  const intersection = new Point(intersectionGeo.x, intersectionGeo.y).setLabel('X')
+  return [intersection]
+}
+
 const referentPoint = new Point(300, 200)
   .setSize(8)
   .setColor(Colors.Clrs.LIME)
@@ -39,7 +48,8 @@ update()
 
 scene
   .setSize(1000, 600)
-  .add(area, ...segments, ...points, referentPoint)
+  .add(area, ...segments, ...points, referentPoint, circle)
+  .addVirtualObjects(virtual)
   .onUpdate(update)
   .drawAll()
 

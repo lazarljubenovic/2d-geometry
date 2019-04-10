@@ -76,4 +76,14 @@ export default class Line extends Object<LineAttributes> {
     return this
   }
 
+  public setColor (color: string): this {
+    this.attributes.color = color
+    return this
+  }
+
+  public setWidth (width: number): this {
+    this.attributes.width = width
+    return this
+  }
+
 }
