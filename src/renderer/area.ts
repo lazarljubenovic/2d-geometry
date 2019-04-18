@@ -5,10 +5,7 @@ import { override } from '../utils'
 
 export default class extends Object<AreaAttributes> {
 
-  protected attributes: Partial<AreaAttributes> = {
-    color: undefined,
-    style: undefined,
-  }
+  protected attributes: Partial<AreaAttributes> = {}
 
   constructor (public points: Point.T[]) {
     super()
@@ -29,7 +26,7 @@ export default class extends Object<AreaAttributes> {
     const offset = this.getScene().renderOffset
 
     ctx.save()
-    ctx.fillStyle = attrs.color
+    ctx.fillStyle = attrs.fill
     const [first, ...rest] = this.points
     ctx.moveTo(first.x + offset, first.y + offset)
     for (const point of rest) {
@@ -42,13 +39,13 @@ export default class extends Object<AreaAttributes> {
     return this
   }
 
-  public setColor (color: string): this {
-    this.attributes.color = color
+  public fill (color: string): this {
+    this.attributes.fill = color
     return this
   }
 
-  public setStyle (style: AreaShadeStyle): this {
-    this.attributes.style = style
+  public fillStyle (style: AreaShadeStyle): this {
+    this.attributes.fillStyle = style
     return this
   }
 

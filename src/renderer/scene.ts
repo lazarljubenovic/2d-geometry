@@ -2,33 +2,39 @@ import Object from './object'
 import Point from './point'
 import * as Geo from '../geometry'
 import * as utils from '../utils'
-import { Colors } from '../index'
+import * as Colors from '../colors'
 
 export interface PointAttributes {
-  color: string
+  stroke: string
+  fill: string
   size: number
   label: string
+  labelAngle: number
   isVisible: boolean
   isLocked: boolean
 }
 
 export const enum LineStyle {
   Solid,
+  Dashed,
 }
 
 export interface LineAttributes {
-  color: string
+  stroke: string
   width: number
-  style: LineStyle
+  strokeStyle: LineStyle
   isVisible: boolean
 }
 
 export interface SegmentAttributes {
-  color: string
+  stroke: string
   width: number
-  style: LineStyle
+  strokeStyle: LineStyle
   isVisible: boolean
   label: string
+  labelPosition: number // 0 to 1
+  labelAngle: number
+  labelOffset: number
   isVector: boolean
 }
 
@@ -37,17 +43,23 @@ export const enum AreaShadeStyle {
 }
 
 export interface AreaAttributes {
-  color: string
-  style: AreaShadeStyle
+  fill: string
+  fillStyle: AreaShadeStyle
 }
 
 export const enum CircleStyle {
   Solid,
+  Dashed,
 }
 
 export interface CircleAttributes {
-  color: string
-  style: CircleStyle
+  stroke: string
+  fill: string
+  strokeStyle: CircleStyle
+  isVisible: boolean
+  arcFrom: number
+  arcTo: number
+  width: number
 }
 
 export default class Scene {
@@ -177,10 +189,10 @@ export default class Scene {
     this.objects.forEach(object => {
       if (this._selectedPoint == object) {
         this.ctx.save()
-        const { x, y } = this._selectedPoint
+        const { x, y } = this._selectedPoint.geo
         this.ctx.beginPath()
-        this.ctx.fillStyle = this._selectedPoint.getAttributes().color + 'BB'
-        this.ctx.arc(x + offset, y + offset, 10, 0, 2 * Math.PI, false)
+        this.ctx.fillStyle = this._selectedPoint.getAttributes().stroke + 'BB'
+        this.ctx.arc(x.valueOf() + offset, y.valueOf() + offset, 10, 0, 2 * Math.PI, false)
         this.ctx.fill()
         this.ctx.restore()
       }
@@ -190,7 +202,6 @@ export default class Scene {
   }
 
   public drawVirtualObjects (): this {
-    const offset = this.renderOffset
     const objectGroups = this.virtualObjects.map(fn => fn())
     for (const objectGroup of objectGroups) {
       for (const object of objectGroup) {
@@ -248,35 +259,51 @@ export default class Scene {
     this._selectedPoint.set(result)
   }
 
-  private updateNearestPointBasedOnCursor (cursor: Geo.Point.T) {
-    if (this.points.length == 0) return
-    const nearestPoint = Geo.Point.findClosestPoint(cursor, this.points)
-    const result = nearestPoint.distance < 10 ? nearestPoint.point : null
-    if (result == null) return this._selectedPoint = null
+  private updateNearestPointBasedOnCursor (cursor: Geo.Point.T): boolean {
+    if (this.points.length == 0) return false
+    const nearestPointInfo = Geo.Point.findClosestPoint(cursor, this.points.map(p => p.geo))
+    const nearestPoint = this.points[nearestPointInfo.index]
+    const result = nearestPointInfo.distance < 10 ? nearestPoint : null
+    if (result == null) {
+      if (this._selectedPoint == null) return false
+      this._selectedPoint = null
+      return true
+    }
+
     const { isLocked } = result.getAttributes()
-    if (isLocked) return this._selectedPoint = null
+    if (isLocked) {
+      if (this._selectedPoint == null) return false
+      this._selectedPoint = null
+      return true
+    }
+
+    if (this._selectedPoint == result) return false
     this._selectedPoint = result
+    return true
   }
 
   private onMouseMove = (event: MouseEvent) => {
     const cursor = { x: event.offsetX, y: event.offsetY }
-    if (this._isMouseDown) {
+    if (this._isMouseDown && this._selectedPoint != null) {
       this.moveSelectedPointTo(cursor)
+      this.redraw()
     } else {
-      this.updateNearestPointBasedOnCursor(cursor)
+      const didChange = this.updateNearestPointBasedOnCursor(cursor)
+      if (didChange) {
+        this.redraw()
+      }
     }
-    this.redraw()
   }
 
   private onMouseDown = (event: MouseEvent) => {
     this._isMouseDown = true
-    document.body.style.cursor = 'none'
   }
 
   private onMouseUp = (event: MouseEvent) => {
+    if (this._isMouseDown) {
+      this.redraw()
+    }
     this._isMouseDown = false
-    document.body.style.cursor = 'default'
-    this.redraw()
   }
 
   private addEventListeners (): this {
@@ -361,9 +388,11 @@ export default class Scene {
   // Point
 
   private defaultPointAttributes: PointAttributes = {
-    color: Colors.Clrs.BLACK,
+    stroke: Colors.Clrs.BLACK,
+    fill: Colors.Clrs.BLACK,
     size: 2,
     label: '',
+    labelAngle: 0,
     isVisible: true,
     isLocked: false,
   }
@@ -380,9 +409,9 @@ export default class Scene {
   // Line
 
   private defaultLineAttributes: LineAttributes = {
-    color: Colors.Clrs.BLACK,
+    stroke: Colors.Clrs.BLACK,
     width: 1,
-    style: LineStyle.Solid,
+    strokeStyle: LineStyle.Solid,
     isVisible: true,
   }
 
@@ -398,10 +427,13 @@ export default class Scene {
   // Segment
 
   private defaultSegmentAttributes: SegmentAttributes = {
-    color: Colors.Clrs.BLACK,
+    stroke: Colors.Clrs.BLACK,
     width: 1,
-    style: LineStyle.Solid,
+    strokeStyle: LineStyle.Solid,
     label: '',
+    labelAngle: Math.PI / 2,
+    labelOffset: 0,
+    labelPosition: 0.5,
     isVisible: true,
     isVector: false,
   }
@@ -418,8 +450,8 @@ export default class Scene {
   // Area
 
   private defaultAreaAttributes: AreaAttributes = {
-    color: 'rgba(0, 0, 0, .2)',
-    style: AreaShadeStyle.Solid,
+    fill: 'rgba(0, 0, 0, .2)',
+    fillStyle: AreaShadeStyle.Solid,
   }
 
   public setDefaultAreaAttributes (attributes: AreaAttributes): this {
@@ -434,8 +466,13 @@ export default class Scene {
   // Circle
 
   private defaultCircleAttributes: CircleAttributes = {
-    color: 'rgba(0, 0, 0)',
-    style: CircleStyle.Solid,
+    stroke: 'rgba(0, 0, 0)',
+    fill: 'transparent',
+    strokeStyle: CircleStyle.Solid,
+    isVisible: true,
+    arcFrom: 0,
+    arcTo: 2 * Math.PI,
+    width: 1,
   }
 
   public setDefaultCircleAttributes (attributes: CircleAttributes): this {

@@ -65,6 +65,8 @@ export function exists (
   v21: Point.T,
   v22: Point.T,
 ): IntersectionType {
+  if (Point.eq(v11, v12) || Point.eq(v21, v22)) return IntersectionType.None
+
   const line1 = Line.getGeneralFormFromSegment(v11, v12)
   const n1 = Line.equation(v21, line1)
   const n2 = Line.equation(v22, line1)

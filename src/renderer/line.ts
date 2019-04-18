@@ -1,4 +1,4 @@
-import { LineAttributes } from './scene'
+import { LineAttributes, LineStyle } from './scene'
 import * as Geo from '../geometry'
 import Object from './object'
 import { override } from '../utils'
@@ -6,12 +6,7 @@ import * as fpop from 'fpop'
 
 export default class Line extends Object<LineAttributes> {
 
-  protected attributes: Partial<LineAttributes> = {
-    color: undefined,
-    style: undefined,
-    width: undefined,
-    isVisible: undefined,
-  }
+  protected attributes: Partial<LineAttributes> = {}
 
   constructor (public p1: Geo.Point.T, public p2: Geo.Point.T) {
     super()
@@ -34,8 +29,9 @@ export default class Line extends Object<LineAttributes> {
     const h = this.getScene().getHeight()
 
     ctx.save()
-    ctx.strokeStyle = attrs.color
+    ctx.strokeStyle = attrs.stroke
     ctx.lineWidth = attrs.width
+    if (attrs.strokeStyle == LineStyle.Dashed) ctx.setLineDash([5, 5])
 
     ctx.beginPath()
 
@@ -76,13 +72,20 @@ export default class Line extends Object<LineAttributes> {
     return this
   }
 
-  public setColor (color: string): this {
-    this.attributes.color = color
+  public stroke (color: string): this {
+    this.attributes.stroke = color
     return this
   }
 
-  public setWidth (width: number): this {
+  public color (color: string): this { return this.stroke(color) }
+
+  public width (width: number): this {
     this.attributes.width = width
+    return this
+  }
+
+  public dashed (): this {
+    this.attributes.strokeStyle = LineStyle.Dashed
     return this
   }
 

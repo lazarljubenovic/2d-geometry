@@ -26,12 +26,48 @@ export function eq (...points: T[]): boolean {
   return fpop.eq(...points.map(x)) && fpop.eq(...points.map(y))
 }
 
+export function polar (radius: number, angle: number) {
+  const x = radius * Math.cos(angle)
+  const y = radius * Math.sin(angle)
+  return { x, y }
+}
+
 export function add (...points: T[]): T {
   let x: number = 0
   let y: number = 0
   for (const point of points) {
     x += point.x
     y += point.y
+  }
+  return { x, y }
+}
+
+export const translate = add
+
+export function translateX (...pointsOrXs: Array<number | T>) {
+  let x: number = 0
+  let y: number = 0
+  for (const n of pointsOrXs) {
+    if (typeof n == 'number') {
+      x += n
+    } else {
+      x += n.x
+      y += n.y
+    }
+  }
+  return { x, y }
+}
+
+export function translateY (...pointsOrYs: Array<number | T>) {
+  let x: number = 0
+  let y: number = 0
+  for (const n of pointsOrYs) {
+    if (typeof n == 'number') {
+      y += n
+    } else {
+      x += n.x
+      y += n.y
+    }
   }
   return { x, y }
 }
@@ -113,6 +149,12 @@ export function perp (u: T): T {
   // noinspection JSSuspiciousNameCombination
   const y = u.x
   return { x, y }
+}
+
+export function perpWrt (point: T, pivot: T): T {
+  const u  = sub(point, pivot)
+  const uT = perp(u)
+  return add(pivot, uT)
 }
 
 export function rotate (t: T, angle: number): T {
